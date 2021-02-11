@@ -1,0 +1,29 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "newLine": "lf",
+    "noImplicitAny": false,
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es2017",
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "outDir": "lib/",
+    "typeRoots": [
+      "node_modules/@types"
+    ]
+  },
+  "exclude": [
+    "lib",
+    "node_modules"
+  ]
+}
