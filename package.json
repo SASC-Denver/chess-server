@@ -1,0 +1,16 @@
+{
+  "name": "tic-tac-toe-server",
+  "version": "1.0.0",
+  "dependencies": {
+    "@types/node": "^14.10.0",
+    "fastify": "^3.3.0",
+    "fastify-cors": "^4.1.0"
+  },
+  "devDependencies": {
+    "tslint": "^5.20.1",
+    "typescript": "^3.8.2"
+  },
+  "main": "lib/index.js",
+  "type": "module",
+  "typings": "lib/index"
+}
