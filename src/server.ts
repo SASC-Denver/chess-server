@@ -1,4 +1,4 @@
-import {fastify} from 'fastify'
+import {fastify}   from 'fastify'
 import fastifyCors from 'fastify-cors'
 
 const server = fastify({logger: false})
@@ -28,6 +28,17 @@ interface Game {
 
 var ALL_GAMES: Game[] = []
 
+var WINNING_CONDITIONS = [
+	[{row: 0, column: 0}, {row: 1, column: 0}, {row: 2, column: 0}],
+	[{row: 0, column: 1}, {row: 1, column: 1}, {row: 2, column: 1}],
+	[{row: 0, column: 2}, {row: 1, column: 2}, {row: 2, column: 2}],
+	[{row: 0, column: 0}, {row: 0, column: 1}, {row: 0, column: 2}],
+	[{row: 1, column: 0}, {row: 1, column: 1}, {row: 1, column: 2}],
+	[{row: 2, column: 0}, {row: 2, column: 1}, {row: 2, column: 2}],
+	[{row: 0, column: 0}, {row: 1, column: 1}, {row: 2, column: 2}],
+	[{row: 0, column: 2}, {row: 1, column: 1}, {row: 0, column: 2}]
+]
+
 server.put('/api/join', async (
 	request,
 	reply
@@ -49,11 +60,11 @@ server.put('/api/join', async (
 				player1: body.playerName,
 				player2: null,
 				whosMove: body.playerName,
-				board: [[null, null, null],[null, null, null],[null, null, null]]
+				board: [[null, null, null], [null, null, null], [null, null, null]]
 			}
-			ALL_GAMES.push(lastGame);
-			var gameIndex = ALL_GAMES.length - 1;
-			await wait();
+			ALL_GAMES.push(lastGame)
+			var gameIndex = ALL_GAMES.length - 1
+			await wait()
 			return {
 				gameIndex,
 				whosMove: lastGame.player1,
@@ -65,14 +76,14 @@ server.put('/api/join', async (
 			player1: body.playerName,
 			player2: null,
 			whosMove: body.playerName,
-			board: [[null, null, null],[null, null, null],[null, null, null]]
+			board: [[null, null, null], [null, null, null], [null, null, null]]
 		}
-		ALL_GAMES.push(lastGame);
-		var gameIndex = ALL_GAMES.length - 1;
-		await wait();
+		ALL_GAMES.push(lastGame)
+		var gameIndex = ALL_GAMES.length - 1
+		await wait()
 		return {
 			gameIndex,
-			whosMove: lastName.whosMove,
+			whosMove: lastGame.whosMove,
 			otherPlayer: lastGame.player2
 		}
 	}
@@ -97,23 +108,24 @@ server.put('/api/move', async (
 ) => {
 	const body: any = JSON.parse(request.body as any)
 
-	body.gameIndex;
-	body.playerName;
-	body.move.row;
-	body.move.column;
-
-	if(!body.move || typeof body.move.row !== 'number' || body.move.row < 0 || body.move.row > 2) {
+	if (!body.move || typeof body.move.row !== 'number' || body.move.row < 0 || body.move.row > 2) {
 		return {
 			error: 'Invalid move'
 		}
 	}
 
-	if(typeof body.gameIndex !== 'number' || body.gameIndex < 0 || body.gameIndex >= ALL_GAMES.length) {
+	if (typeof body.move.column !== 'number' || body.move.column < 0 || body.move.column > 2) {
 		return {
 			error: 'Invalid move'
 		}
 	}
-	var game = ALL_GAMES[body.gameIndex];
+
+	if (typeof body.gameIndex !== 'number' || body.gameIndex < 0 || body.gameIndex >= ALL_GAMES.length) {
+		return {
+			error: 'Invalid move'
+		}
+	}
+	var game = ALL_GAMES[body.gameIndex]
 
 	if (body.playerName !== game.whosMove) {
 		return {
@@ -121,10 +133,68 @@ server.put('/api/move', async (
 		}
 	}
 
+	if (game.board[body.move.row][body.move.column]) {
+		return {
+			error: 'Invalid move'
+		}
+	}
 
+	game.board[body.move.row][body.move.column] = game.whosMove
 
-	return null
+	var winningPlayer = whoWon(game)
+
+	if (winningPlayer) {
+		return {
+			gameOver: true,
+			winningPlayer
+		}
+	}
+
+	if (game.whosMove === game.player1) {
+		game.whosMove = game.player2
+	} else {
+		game.whosMove = game.player1
+	}
+
+	return {
+		whosMove: game.whosMove
+	}
 })
+
+server.put('/api/getGameState', async (
+	request,
+	reply
+) => {
+	const body: any = JSON.parse(request.body as any)
+
+	return ALL_GAMES[body.gameIndex]
+})
+
+function whoWon(game: Game) {
+	for (var winningCondition of WINNING_CONDITIONS) {
+		var winningValue = whoWonACondition(winningCondition, game.board)
+		if (winningValue) {
+			return winningValue
+		}
+	}
+	return null
+}
+
+function whoWonACondition(
+	winningCondition,
+	board
+) {
+	var firstCell  = winningCondition[0]
+	var firstValue = board[firstCell.row][firstCell.column]
+	for (var i = 1; i < winningCondition.length; i++) {
+		var nextCell  = winningCondition[i]
+		var nextValue = board[nextCell.row][nextCell.column]
+		if (firstValue !== nextValue) {
+			return null
+		}
+	}
+	return firstValue
+}
 
 // Run the server!
 const startFunction = async () => {
