@@ -25,7 +25,7 @@ server.get('/api/join', async (
 ) => {
 	const body: any = JSON.parse(request.body as any)
 
-	return {test: true}
+	return {test: "hello!"}
 })
 
 server.put('/api/move', async (
