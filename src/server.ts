@@ -19,7 +19,7 @@ server.register(fastifyCors, {
 	}
 })
 
-server.put('/api/join', async (
+server.get('/api/join', async (
 	request,
 	reply
 ) => {
