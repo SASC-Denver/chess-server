@@ -59,7 +59,7 @@ server.put('/api/join', async (
 	reply
 ) => {
 	console.log(request.body)
-	const body: any = JSON.parse(request.body as any)
+	const body: any = request.body
 
 	var lastGame: Game
 	if (ALL_GAMES.length) {
