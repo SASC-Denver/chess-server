@@ -65,9 +65,12 @@ interface GameCheckRequest {
 }
 
 interface GameCheckResponse {
+	board: boolean[][]
+	lastMoveTime: number;
+	otherPlayerName: string;
 	state: GameState;
 	yourMove: boolean;
-	board: boolean[][]
+	yourSign: string;
 }
 
 interface JoinRequest {
@@ -75,10 +78,13 @@ interface JoinRequest {
 }
 
 interface JoinResponse {
+	board: boolean[][];
 	gameId: string;
+	otherPlayerName: string;
 	playerId: string;
 	state: GameState;
 	yourMove: boolean;
+	yourSign: string;
 }
 
 interface MoveRequest {
@@ -88,7 +94,6 @@ interface MoveRequest {
 		column: number,
 		row: number
 	}
-	state: GameState
 }
 
 interface MoveResponse {
@@ -168,7 +173,9 @@ server.put('/tic-tac-toe/check', async (
 	return {
 		board: game.board,
 		state: game.state,
+		otherPlayerName: playerIndex === 0 ? game.players[1].name : game.players[0].name,
 		yourMove: game.xMovesNext ? !playerIndex : !!playerIndex,
+		yourSign: playerIndex === 0 ? 'X' : 'O'
 	} as GameCheckResponse
 
 })
@@ -177,7 +184,7 @@ server.put('/tic-tac-toe/join', async (
 	request,
 	reply
 ) => {
-	if (ALL_GAMES.size > 10000) {
+	if (ALL_GAMES.size > 100) {
 		return {
 			error: 'Too many games going on, please wait'
 		} as ErrorResponse
@@ -201,10 +208,13 @@ server.put('/tic-tac-toe/join', async (
 		game.players.push(player)
 		game.state = GameState.STARTED
 		return {
+			board: game.board,
 			gameId: game.id,
+			otherPlayerName: game.players[0].name,
 			playerId: player.id,
 			state: game.state,
-			yourMove: false
+			yourMove: false,
+			yourSign: 'O'
 		} as JoinResponse
 	} else {
 		game = {
@@ -222,10 +232,13 @@ server.put('/tic-tac-toe/join', async (
 		GAMES_WITH_PLAYER_NEEDED.push(game)
 
 		return {
+			board: game.board,
 			gameId: game.id,
+			otherPlayerName: null,
 			playerId: player.id,
 			state: game.state,
-			yourMove: true
+			yourMove: true,
+			yourSign: 'X'
 		} as JoinResponse
 	}
 })
