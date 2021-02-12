@@ -1,7 +1,18 @@
-import {fastify}                      from 'fastify'
-import fastifyCors                    from 'fastify-cors'
+import {fastify}   from 'fastify'
+import fastifyCors from 'fastify-cors'
+import fs          from 'fs'
 
-const server = fastify({logger: false})
+require('dotenv').config()
+
+const server = fastify({
+	http2: true,
+	https: {
+		key: fs.readFileSync(process.env.HTTPS_KEY),
+		cert: fs.readFileSync(process.env.HTTPS_CERT)
+	},
+	logger: false
+})
+
 server.register(fastifyCors, {
 	origin: (
 		origin,
