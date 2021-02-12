@@ -1,8 +1,9 @@
+import dotenv      from 'dotenv'
 import {fastify}   from 'fastify'
 import fastifyCors from 'fastify-cors'
 import fs          from 'fs'
 
-require('dotenv').config()
+dotenv.config()
 
 console.log(`HTTPS_KEY:  ${process.env.HTTPS_KEY}`)
 console.log(`HTTPS_CERT: ${process.env.HTTPS_CERT}`)
