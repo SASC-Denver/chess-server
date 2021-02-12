@@ -173,7 +173,7 @@ server.put('/tic-tac-toe/check', async (
 	return {
 		board: game.board,
 		state: game.state,
-		otherPlayerName: playerIndex === 0 ? game.players[1].name : game.players[0].name,
+		otherPlayerName: game.players.length > 1 ? (playerIndex === 0 ? game.players[1].name : game.players[0].name) : null,
 		yourMove: game.state === GameState.PENDING ? false : game.xMovesNext ? !playerIndex : !!playerIndex,
 		yourSign: playerIndex === 0 ? 'X' : 'O'
 	} as GameCheckResponse
