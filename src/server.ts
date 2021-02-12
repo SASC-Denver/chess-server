@@ -58,6 +58,7 @@ server.put('/api/join', async (
 	request,
 	reply
 ) => {
+	console.log(request.body)
 	const body: any = JSON.parse(request.body as any)
 
 	var lastGame: Game
