@@ -174,7 +174,7 @@ server.put('/tic-tac-toe/check', async (
 		board: game.board,
 		state: game.state,
 		otherPlayerName: playerIndex === 0 ? game.players[1].name : game.players[0].name,
-		yourMove: game.xMovesNext ? !playerIndex : !!playerIndex,
+		yourMove: game.state === GameState.PENDING ? false : game.xMovesNext ? !playerIndex : !!playerIndex,
 		yourSign: playerIndex === 0 ? 'X' : 'O'
 	} as GameCheckResponse
 
@@ -234,7 +234,7 @@ server.put('/tic-tac-toe/join', async (
 			otherPlayerName: null,
 			playerId: player.id,
 			state: game.state,
-			yourMove: true,
+			yourMove: false,
 			yourSign: 'X'
 		} as JoinResponse
 	}
