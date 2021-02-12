@@ -89,16 +89,16 @@ interface JoinResponse {
 
 interface MoveRequest {
 	gameId: string;
-	playerId: string;
 	move: {
 		column: number,
 		row: number
 	}
+	playerId: string;
 }
 
 interface MoveResponse {
-	state: GameState;
 	board: boolean[][];
+	state: GameState;
 }
 
 var ALL_GAMES: Map<string, Game>     = new Map<string, Game>()
@@ -288,7 +288,7 @@ server.put('/tic-tac-toe/move', async (
 	}
 
 	if ((playerIndex === 0 && !game.xMovesNext)
-		|| (playerIndex === 1 && !game.xMovesNext)) {
+		|| (playerIndex === 1 && game.xMovesNext)) {
 		return {
 			error: 'It\'s not your move'
 		}
