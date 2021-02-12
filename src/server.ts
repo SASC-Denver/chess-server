@@ -4,6 +4,9 @@ import fs          from 'fs'
 
 require('dotenv').config()
 
+console.log(`HTTPS_KEY:  ${process.env.HTTPS_KEY}`)
+console.log(`HTTPS_CERT: ${process.env.HTTPS_CERT}`)
+
 const server = fastify({
 	http2: true,
 	https: {
