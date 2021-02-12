@@ -199,12 +199,12 @@ server.put('/tic-tac-toe/join', async (
 	}
 
 	var game: Game
+	var player: Player = {
+		id: uuidv4(),
+		name: body.playerName
+	}
 	if (GAMES_WITH_PLAYER_NEEDED.length) {
 		game               = GAMES_WITH_PLAYER_NEEDED.shift()
-		var player: Player = {
-			id: uuidv4(),
-			name: body.playerName
-		}
 		game.players.push(player)
 		game.state = GameState.STARTED
 		return {
@@ -222,10 +222,7 @@ server.put('/tic-tac-toe/join', async (
 			id: uuidv4(),
 			lastMoveTime: new Date().getTime(),
 			xMovesNext: true,
-			players: [{
-				id: uuidv4(),
-				name: body.playerName
-			}],
+			players: [player],
 			state: GameState.PENDING
 		}
 		ALL_GAMES.set(game.id, game)
